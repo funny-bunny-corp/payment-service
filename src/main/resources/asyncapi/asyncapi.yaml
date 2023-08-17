@@ -1,0 +1,44 @@
+asyncapi: '2.0.0'
+id: 'urn:com.paymentic.payments'
+info:
+  title: Paymentes API CloudEvents API structured
+  version: 0.0.1
+defaultContentType: application/cloudevents+json; charset=UTF-8
+
+channels:
+  payments:
+    description: The topic on which payments may be consumed.
+    subscribe:
+      summary: Inform about environmental lighting conditions of a particular streetlight.
+      operationId: paymentCreatedStream
+      message:
+        $ref: '#/components/messages/cePaymentCreatedEvent'
+
+components:
+  messages:
+    cePaymentCreatedEvent:
+      name: paymentCreatedEvent
+      title: Payment Created
+      summary: Inform about environmental lighting conditions of a particular streetlight.
+      contentType: application/cloudevents+json; charset=UTF-8
+      payload:
+        $ref: "#/components/schemas/paymentCreatedEvent"
+  schemas:
+    paymentCreatedEvent:
+      type: object
+      allOf:
+        - $ref: 'https://raw.githubusercontent.com/cloudevents/spec/v1.0.1/spec.json'
+      properties:
+        data:
+          $ref: '#/components/schemas/paymentCreatedEventPayload'
+    paymentCreatedEventPayload:
+      type: object
+      properties:
+        fullName:
+          type: string
+        email:
+          type: string
+          format: email
+        age:
+          type: integer
+          minimum: 18
