@@ -4,6 +4,7 @@ import com.paymentic.domain.application.CheckoutService;
 import org.openapitools.api.V1Api;
 import org.openapitools.model.PaymentCreated;
 import org.openapitools.model.PaymentRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +19,7 @@ public class CheckoutResource implements V1Api {
   @Override
   public ResponseEntity<PaymentCreated> createPayment(PaymentRequest paymentRequest) {
     var paymentCreated = this.checkoutService.process(paymentRequest);
-
-    return null;
+    return new ResponseEntity<PaymentCreated>(new PaymentCreated().id(paymentCreated.getId().toString()), HttpStatus.CREATED);
   }
+
 }

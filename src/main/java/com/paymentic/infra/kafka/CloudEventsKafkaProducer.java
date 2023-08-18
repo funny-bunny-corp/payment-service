@@ -1,11 +1,11 @@
 package com.paymentic.infra.kafka;
 
-import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.kafka.CloudEventSerializer;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -23,12 +23,10 @@ public class CloudEventsKafkaProducer {
     props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, CloudEventSerializer.class);
     return props;
   }
-
   @Bean
   public ProducerFactory<String, CloudEvent> producerFactory() {
     return new DefaultKafkaProducerFactory<>(producerConfigs());
   }
-
   @Bean
   public KafkaTemplate<String, CloudEvent> kafkaTemplate() {
     return new KafkaTemplate<>(producerFactory());

@@ -38,14 +38,15 @@ public class Checkout {
 
   public Checkout() {
   }
-  private Checkout(BuyerInfo buyerInfo, CardInfo cardInfo,
+  private Checkout(UUID id,BuyerInfo buyerInfo, CardInfo cardInfo,
       Boolean isPaymentDone) {
     this.buyerInfo = buyerInfo;
     this.cardInfo = cardInfo;
     this.isPaymentDone = isPaymentDone;
+    this.id = id;
   }
   public static Checkout newCheckoutInitiated(BuyerInfo buyerInfo, CardInfo cardInfo){
-    return new Checkout(buyerInfo,cardInfo,true);
+    return new Checkout(UUID.randomUUID(),buyerInfo,cardInfo,false);
   }
   public BuyerInfo getBuyerInfo() {
     return buyerInfo;

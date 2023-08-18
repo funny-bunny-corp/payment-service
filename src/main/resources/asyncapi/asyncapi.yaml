@@ -1,28 +1,30 @@
-asyncapi: '2.0.0'
+asyncapi: 2.6.0
 id: 'urn:com.paymentic.payments'
 info:
   title: Paymentes API CloudEvents API structured
   version: 0.0.1
 defaultContentType: application/cloudevents+json; charset=UTF-8
-
 channels:
   payments:
     description: The topic on which payments may be consumed.
     subscribe:
-      summary: Inform about environmental lighting conditions of a particular streetlight.
+      summary: >-
+        Inform about environmental lighting conditions of a particular
+        streetlight.
       operationId: paymentCreatedStream
       message:
         $ref: '#/components/messages/cePaymentCreatedEvent'
-
 components:
   messages:
     cePaymentCreatedEvent:
       name: paymentCreatedEvent
       title: Payment Created
-      summary: Inform about environmental lighting conditions of a particular streetlight.
+      summary: >-
+        Inform about environmental lighting conditions of a particular
+        streetlight.
       contentType: application/cloudevents+json; charset=UTF-8
       payload:
-        $ref: "#/components/schemas/paymentCreatedEvent"
+        $ref: '#/components/schemas/paymentCreatedEvent'
   schemas:
     paymentCreatedEvent:
       type: object
@@ -33,12 +35,29 @@ components:
           $ref: '#/components/schemas/paymentCreatedEventPayload'
     paymentCreatedEventPayload:
       type: object
+      additionalProperties: false
       properties:
-        fullName:
+        id:
           type: string
-        email:
+        buyerInfo:
+          $ref: '#/components/schemas/buyerInfo'
+        cardInfo:
+          $ref: '#/components/schemas/cardInfo'
+        paymentDone:
+          type: boolean
+    buyerInfo:
+      type: object
+      additionalProperties: false
+      properties:
+        document:
           type: string
-          format: email
-        age:
-          type: integer
-          minimum: 18
+        name:
+          type: string
+    cardInfo:
+      type: object
+      additionalProperties: false
+      properties:
+        cardInfo:
+          type: string
+        token:
+          type: string
