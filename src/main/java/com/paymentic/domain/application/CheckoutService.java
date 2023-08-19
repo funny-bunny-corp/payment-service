@@ -5,11 +5,14 @@ import com.paymentic.domain.CheckoutId;
 import com.paymentic.domain.PaymentOrder;
 import com.paymentic.domain.events.PaymentCreatedEvent;
 import com.paymentic.domain.events.PaymentOrderEvent;
+import com.paymentic.domain.events.data.CheckoutData;
+import com.paymentic.domain.events.data.PaymentOrderData;
 import com.paymentic.domain.events.publisher.PaymentEventsPublisher;
 import com.paymentic.domain.repositories.CheckoutRepository;
 import com.paymentic.domain.shared.BuyerInfo;
 import com.paymentic.domain.shared.CardInfo;
 import com.paymentic.domain.shared.SellerInfo;
+import java.util.stream.Collectors;
 import org.openapitools.model.PaymentRequest;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -34,11 +37,13 @@ public class CheckoutService {
         new CardInfo(request.getCreditCardInfo().getCardInfo(),
             request.getCreditCardInfo().getToken()));
     this.checkoutRepository.save(checkout);
-    request.getPaymentOrders().forEach(paymentOrder -> {
+    var payments = request.getPaymentOrders().stream().map(paymentOrder -> {
       var payment = PaymentOrder.newPaymentInitiated(paymentOrder.getAmount(),paymentOrder.getCurrency(),new CheckoutId(request.getCheckoutId()),new SellerInfo(paymentOrder.getSellerAccount()));
       this.publisher.publishEvent(new PaymentOrderEvent(this,new CheckoutId(request.getCheckoutId()),payment));
-    });
-    this.eventsBridge.paymentCreated(new PaymentCreatedEvent(checkout));
+      return new PaymentOrderData(payment.getId(),payment.getAmount(),payment.getCurrency(),payment.getStatus());
+    }).collect(Collectors.toList());
+    var checkoutData = new CheckoutData(checkout.getId(),checkout.getBuyerInfo(),checkout.getCardInfo());
+    this.eventsBridge.paymentCreated(new PaymentCreatedEvent(checkoutData,payments));
     return checkout;
   }
 

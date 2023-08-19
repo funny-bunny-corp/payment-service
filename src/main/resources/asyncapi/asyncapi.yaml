@@ -37,14 +37,24 @@ components:
       type: object
       additionalProperties: false
       properties:
+        checkout:
+          $ref: '#/components/schemas/checkout'
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/paymentOrder'
+
+    checkout:
+      type: object
+      additionalProperties: false
+      properties:
         id:
           type: string
         buyerInfo:
           $ref: '#/components/schemas/buyerInfo'
         cardInfo:
           $ref: '#/components/schemas/cardInfo'
-        paymentDone:
-          type: boolean
+
     buyerInfo:
       type: object
       additionalProperties: false
@@ -53,6 +63,7 @@ components:
           type: string
         name:
           type: string
+
     cardInfo:
       type: object
       additionalProperties: false
@@ -61,3 +72,34 @@ components:
           type: string
         token:
           type: string
+
+    checkoutId:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+
+    sellerInfo:
+      type: object
+      additionalProperties: false
+      properties:
+        sellerId:
+          type: string
+
+    paymentOrder:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        amount:
+          type: string
+        currency:
+          type: string
+        status:
+          type: string
+        checkout:
+          $ref: '#/components/schemas/checkoutId'
+        sellerInfo:
+          $ref: '#/components/schemas/sellerInfo'

@@ -2,7 +2,6 @@ package com.paymentic.domain;
 
 import com.paymentic.domain.shared.BuyerInfo;
 import com.paymentic.domain.shared.CardInfo;
-import com.paymentic.domain.shared.SellerInfo;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;

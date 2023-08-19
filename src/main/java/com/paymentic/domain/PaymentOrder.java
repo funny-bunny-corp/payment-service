@@ -34,7 +34,7 @@ public class PaymentOrder {
   @AttributeOverrides({
       @AttributeOverride(name="id",column=@Column(name="checkout_id"))
   })
-  private CheckoutId checkoutId;
+  private CheckoutId checkout;
 
   @Embedded
   @AttributeOverrides({
@@ -52,7 +52,7 @@ public class PaymentOrder {
     this.status = status;
     this.isLedgerUpdated = isLedgerUpdated;
     this.isWalletUpdated = isWalletUpdated;
-    this.checkoutId = checkoutId;
+    this.checkout = checkoutId;
     this.sellerInfo = sellerInfo;
   }
   public static PaymentOrder newPaymentInitiated(String amount, String currency, CheckoutId checkoutId,
@@ -78,8 +78,8 @@ public class PaymentOrder {
   public Boolean getWalletUpdated() {
     return isWalletUpdated;
   }
-  public CheckoutId getCheckoutId() {
-    return checkoutId;
+  public CheckoutId getCheckout() {
+    return checkout;
   }
   public SellerInfo getSellerInfo() {
     return sellerInfo;
