@@ -1,7 +1,5 @@
 package com.paymentic.domain.events;
 
-import com.paymentic.domain.Checkout;
-import com.paymentic.domain.PaymentOrder;
 import com.paymentic.domain.events.data.CheckoutData;
 import com.paymentic.domain.events.data.PaymentOrderData;
 import java.util.List;

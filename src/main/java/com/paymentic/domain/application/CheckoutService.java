@@ -33,7 +33,7 @@ public class CheckoutService {
   }
   @Transactional
   public Checkout process(PaymentRequest request){
-    var checkout = Checkout.newCheckoutInitiated(new BuyerInfo(request.getBuyerInfo().getDocument(), request.getBuyerInfo().getName()),
+    var checkout = Checkout.newCheckoutInitiated(request.getCheckoutId(),new BuyerInfo(request.getBuyerInfo().getDocument(), request.getBuyerInfo().getName()),
         new CardInfo(request.getCreditCardInfo().getCardInfo(),
             request.getCreditCardInfo().getToken()));
     this.checkoutRepository.save(checkout);

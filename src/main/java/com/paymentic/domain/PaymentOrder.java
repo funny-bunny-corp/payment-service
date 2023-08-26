@@ -85,4 +85,9 @@ public class PaymentOrder {
     return sellerInfo;
   }
 
+  public PaymentOrder markStarted(){
+    this.status = PaymentOrderStatus.EXECUTING;
+    return this;
+  }
+
 }

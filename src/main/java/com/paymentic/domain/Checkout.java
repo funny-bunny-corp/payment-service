@@ -44,8 +44,8 @@ public class Checkout {
     this.isPaymentDone = isPaymentDone;
     this.id = id;
   }
-  public static Checkout newCheckoutInitiated(BuyerInfo buyerInfo, CardInfo cardInfo){
-    return new Checkout(UUID.randomUUID(),buyerInfo,cardInfo,false);
+  public static Checkout newCheckoutInitiated(String id,BuyerInfo buyerInfo, CardInfo cardInfo){
+    return new Checkout(UUID.fromString(id),buyerInfo,cardInfo,false);
   }
   public BuyerInfo getBuyerInfo() {
     return buyerInfo;
