@@ -1,21 +1,33 @@
 asyncapi: 2.6.0
 id: 'urn:com.paymentic.payments'
 info:
-  title: Paymentes API CloudEvents API structured
+  title: Payments API CloudEvents API structured
   version: 0.0.1
 defaultContentType: application/cloudevents+json; charset=UTF-8
 channels:
+
   payments:
     description: The topic on which payments may be consumed.
     subscribe:
       summary: >-
-        Inform about environmental lighting conditions of a particular
-        streetlight.
+        Notify ecosystem that payment was created
       operationId: paymentCreatedStream
       message:
         $ref: '#/components/messages/cePaymentCreatedEvent'
+
+  paymentsOrderStarted:
+    description: The topic on which payments may be consumed.
+    publish:
+      summary: >-
+        Inform about payment order started
+      operationId: paymentsOrderStartedStream
+      message:
+        $ref: '#/components/messages/cePaymentStartedEvent'
+
+
 components:
   messages:
+
     cePaymentCreatedEvent:
       name: paymentCreatedEvent
       title: Payment Created
@@ -25,81 +37,31 @@ components:
       contentType: application/cloudevents+json; charset=UTF-8
       payload:
         $ref: '#/components/schemas/paymentCreatedEvent'
+
+    cePaymentStartedEvent:
+      name: paymentStartedEvent
+      title: Payment Orders Started
+      summary: >-
+        Inform about environmental lighting conditions of a particular
+        streetlight.
+      contentType: application/cloudevents+json; charset=UTF-8
+      payload:
+        $ref: '#/components/schemas/paymentStartedEvent'
+
   schemas:
+
     paymentCreatedEvent:
       type: object
       allOf:
         - $ref: 'https://raw.githubusercontent.com/cloudevents/spec/v1.0.1/spec.json'
       properties:
         data:
-          $ref: '#/components/schemas/paymentCreatedEventPayload'
-    paymentCreatedEventPayload:
-      type: object
-      additionalProperties: false
-      properties:
-        checkout:
-          $ref: '#/components/schemas/checkout'
-        payments:
-          type: array
-          items:
-            $ref: '#/components/schemas/paymentOrder'
+          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payments/payments-gateway.v1.payment-created.json'
 
-    checkout:
+    paymentStartedEvent:
       type: object
-      additionalProperties: false
+      allOf:
+        - $ref: 'https://raw.githubusercontent.com/cloudevents/spec/v1.0.1/spec.json'
       properties:
-        id:
-          type: string
-        buyerInfo:
-          $ref: '#/components/schemas/buyerInfo'
-        cardInfo:
-          $ref: '#/components/schemas/cardInfo'
-
-    buyerInfo:
-      type: object
-      additionalProperties: false
-      properties:
-        document:
-          type: string
-        name:
-          type: string
-
-    cardInfo:
-      type: object
-      additionalProperties: false
-      properties:
-        cardInfo:
-          type: string
-        token:
-          type: string
-
-    checkoutId:
-      type: object
-      additionalProperties: false
-      properties:
-        id:
-          type: string
-
-    sellerInfo:
-      type: object
-      additionalProperties: false
-      properties:
-        sellerId:
-          type: string
-
-    paymentOrder:
-      type: object
-      additionalProperties: false
-      properties:
-        id:
-          type: string
-        amount:
-          type: string
-        currency:
-          type: string
-        status:
-          type: string
-        checkout:
-          $ref: '#/components/schemas/checkoutId'
-        sellerInfo:
-          $ref: '#/components/schemas/sellerInfo'
+        data:
+          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payments/payments-gateway.v1.payment-order-started.json'

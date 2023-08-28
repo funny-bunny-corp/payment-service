@@ -40,7 +40,8 @@ public class CheckoutService {
     var payments = request.getPaymentOrders().stream().map(paymentOrder -> {
       var payment = PaymentOrder.newPaymentInitiated(paymentOrder.getAmount(),paymentOrder.getCurrency(),new CheckoutId(request.getCheckoutId()),new SellerInfo(paymentOrder.getSellerAccount()));
       this.publisher.publishEvent(new PaymentOrderEvent(this,new CheckoutId(request.getCheckoutId()),payment));
-      return new PaymentOrderData(payment.getId(),payment.getAmount(),payment.getCurrency(),payment.getStatus());
+      return new PaymentOrderData(payment.getId(),payment.getAmount(),payment.getCurrency(),payment.getStatus(),new SellerInfo(
+          paymentOrder.getSellerAccount()));
     }).collect(Collectors.toList());
     var checkoutData = new CheckoutData(checkout.getId(),checkout.getBuyerInfo(),checkout.getCardInfo());
     this.eventsBridge.paymentCreated(new PaymentCreatedEvent(checkoutData,payments));

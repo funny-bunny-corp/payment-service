@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CloudEventsOrderStartedKafkaBridge {
-  private static final String PAYMENT_ORDER_STARTED_EVENT_TYPE = "paymentic.payments.gateway.v1.payment.started";
+  private static final String PAYMENT_ORDER_STARTED_EVENT_TYPE = "paymentic.payments.gateway.v1.payment.order.started";
   private final ObjectMapper mapper;
   private final PaymentOrderRepository paymentOrderRepository;
   public CloudEventsOrderStartedKafkaBridge(ObjectMapper mapper,
