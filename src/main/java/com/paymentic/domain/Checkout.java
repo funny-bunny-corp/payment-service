@@ -31,6 +31,9 @@ public class Checkout {
   @Column(name = "is_payment_done")
   private Boolean isPaymentDone;
 
+  @Column(name = "idempotency_key")
+  private String idempotencyKey;
+
   public UUID getId() {
     return id;
   }
@@ -38,14 +41,16 @@ public class Checkout {
   public Checkout() {
   }
   private Checkout(UUID id,BuyerInfo buyerInfo, CardInfo cardInfo,
-      Boolean isPaymentDone) {
+      Boolean isPaymentDone,String idempotencyKey) {
     this.buyerInfo = buyerInfo;
     this.cardInfo = cardInfo;
     this.isPaymentDone = isPaymentDone;
     this.id = id;
+    this.idempotencyKey = idempotencyKey;
+
   }
-  public static Checkout newCheckoutInitiated(String id,BuyerInfo buyerInfo, CardInfo cardInfo){
-    return new Checkout(UUID.fromString(id),buyerInfo,cardInfo,false);
+  public static Checkout newCheckoutInitiated(String id,BuyerInfo buyerInfo, CardInfo cardInfo,String idempotencyKey){
+    return new Checkout(UUID.fromString(id),buyerInfo,cardInfo,false,idempotencyKey);
   }
   public BuyerInfo getBuyerInfo() {
     return buyerInfo;
@@ -56,5 +61,7 @@ public class Checkout {
   public Boolean getPaymentDone() {
     return isPaymentDone;
   }
-
+  public String getIdempotencyKey() {
+    return idempotencyKey;
+  }
 }

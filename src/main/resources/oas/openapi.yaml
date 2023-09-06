@@ -41,6 +41,14 @@ paths:
             - payments.write
       operationId: create-payment
       summary: It creates a payment request
+    parameters:
+      -
+        name: Idempotency-Key
+        description: ''
+        schema:
+          type: string
+        in: header
+        required: true
 components:
   schemas:
     buyer-info:

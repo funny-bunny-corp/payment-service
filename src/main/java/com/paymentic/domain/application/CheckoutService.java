@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class CheckoutService {
   private final CheckoutRepository checkoutRepository;
   private final ApplicationEventPublisher publisher;
-
   private final PaymentEventsPublisher eventsBridge;
 
   public CheckoutService(CheckoutRepository checkoutRepository, ApplicationEventPublisher publisher,
@@ -32,18 +31,18 @@ public class CheckoutService {
     this.eventsBridge = eventsBridge;
   }
   @Transactional
-  public Checkout process(PaymentRequest request){
+  public Checkout process(PaymentRequest request,String idempotencyKey){
     var checkout = Checkout.newCheckoutInitiated(request.getCheckoutId(),new BuyerInfo(request.getBuyerInfo().getDocument(), request.getBuyerInfo().getName()),
         new CardInfo(request.getCreditCardInfo().getCardInfo(),
-            request.getCreditCardInfo().getToken()));
+            request.getCreditCardInfo().getToken()),idempotencyKey);
     this.checkoutRepository.save(checkout);
     var payments = request.getPaymentOrders().stream().map(paymentOrder -> {
       var payment = PaymentOrder.newPaymentInitiated(paymentOrder.getAmount(),paymentOrder.getCurrency(),new CheckoutId(request.getCheckoutId()),new SellerInfo(paymentOrder.getSellerAccount()));
       this.publisher.publishEvent(new PaymentOrderEvent(this,new CheckoutId(request.getCheckoutId()),payment));
       return new PaymentOrderData(payment.getId(),payment.getAmount(),payment.getCurrency(),payment.getStatus(),new SellerInfo(
-          paymentOrder.getSellerAccount()));
+          paymentOrder.getSellerAccount()),payment.getIdempotencyKey());
     }).collect(Collectors.toList());
-    var checkoutData = new CheckoutData(checkout.getId(),checkout.getBuyerInfo(),checkout.getCardInfo());
+    var checkoutData = new CheckoutData(checkout.getId(),checkout.getBuyerInfo(),checkout.getCardInfo(),idempotencyKey);
     this.eventsBridge.paymentCreated(new PaymentCreatedEvent(checkoutData,payments));
     return checkout;
   }

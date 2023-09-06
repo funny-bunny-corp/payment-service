@@ -1,5 +1,6 @@
 package com.paymentic.domain;
 
+import com.paymentic.domain.application.HashService;
 import com.paymentic.domain.shared.SellerInfo;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -8,18 +9,16 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import java.util.UUID;
-import org.hibernate.annotations.GenericGenerator;
+import org.apache.kafka.common.protocol.types.Field.Str;
 
 @Entity(name = "payment_order")
 public class PaymentOrder {
+  private static final String IDEMPOTENCY_PATTERN = "%s-%s";
 
   @Id
   @Column(name = "payment_order_id")
-  @GeneratedValue(generator = "UUID")
-  @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
   private UUID id;
   private String amount;
   private String currency;
@@ -42,11 +41,15 @@ public class PaymentOrder {
   })
   private SellerInfo sellerInfo;
 
+  @Column(name = "idempotency_key")
+  private String idempotencyKey;
+
   public PaymentOrder() {
   }
-  private PaymentOrder(String amount, String currency, PaymentOrderStatus status,
+  private PaymentOrder(UUID id,String amount, String currency, PaymentOrderStatus status,
       Boolean isLedgerUpdated, Boolean isWalletUpdated, CheckoutId checkoutId,
-      SellerInfo sellerInfo) {
+      SellerInfo sellerInfo,String idempotencyKey) {
+    this.id = id;
     this.amount = amount;
     this.currency = currency;
     this.status = status;
@@ -54,12 +57,14 @@ public class PaymentOrder {
     this.isWalletUpdated = isWalletUpdated;
     this.checkout = checkoutId;
     this.sellerInfo = sellerInfo;
+    this.idempotencyKey = idempotencyKey;
   }
   public static PaymentOrder newPaymentInitiated(String amount, String currency, CheckoutId checkoutId,
       SellerInfo sellerInfo){
-    return new PaymentOrder(amount,currency,PaymentOrderStatus.NOT_STARTED,false,false,checkoutId,sellerInfo);
+    var id = UUID.randomUUID();
+    var idempotencyKey = HashService.createMD5Hash(String.format(IDEMPOTENCY_PATTERN,checkoutId.getId(), id.toString()));
+    return new PaymentOrder(id,amount,currency,PaymentOrderStatus.NOT_STARTED,false,false,checkoutId,sellerInfo,idempotencyKey);
   }
-
   public UUID getId() {
     return id;
   }
@@ -84,7 +89,9 @@ public class PaymentOrder {
   public SellerInfo getSellerInfo() {
     return sellerInfo;
   }
-
+  public String getIdempotencyKey() {
+    return idempotencyKey;
+  }
   public PaymentOrder markStarted(){
     this.status = PaymentOrderStatus.EXECUTING;
     return this;
