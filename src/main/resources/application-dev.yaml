@@ -12,3 +12,10 @@ spring:
     open-in-view: false
 server:
   port: 8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+        #health,info,beans,metrics,startup

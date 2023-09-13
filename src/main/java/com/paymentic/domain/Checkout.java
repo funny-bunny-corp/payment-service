@@ -30,14 +30,11 @@ public class Checkout {
   private CardInfo cardInfo;
   @Column(name = "is_payment_done")
   private Boolean isPaymentDone;
-
   @Column(name = "idempotency_key")
   private String idempotencyKey;
-
   public UUID getId() {
     return id;
   }
-
   public Checkout() {
   }
   private Checkout(UUID id,BuyerInfo buyerInfo, CardInfo cardInfo,
