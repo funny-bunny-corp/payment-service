@@ -50,9 +50,10 @@ public class CloudEventsKafkaProducer {
   }
   @Bean
   public KafkaTemplate<String, CloudEvent> kafkaTemplate() {
-    return new KafkaTemplate<>(producerFactory());
+    var template = new KafkaTemplate<>(producerFactory());
+    template.setObservationEnabled(true);
+    return template;
   }
-
   public Map<String, Object> producerConfigs() {
     Map<String, Object> props = new HashMap<>();
     props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
