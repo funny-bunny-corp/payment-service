@@ -20,7 +20,7 @@ management:
     enabled: true
   otlp:
     tracing:
-      endpoint: http://localhost:14318/v1/traces
+      endpoint:
     metrics:
       export:
         resource-attributes:
