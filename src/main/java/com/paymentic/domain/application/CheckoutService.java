@@ -3,6 +3,7 @@ package com.paymentic.domain.application;
 import com.paymentic.domain.Checkout;
 import com.paymentic.domain.CheckoutId;
 import com.paymentic.domain.PaymentOrder;
+import com.paymentic.domain.events.IdempotencyKeyRequestUsage;
 import com.paymentic.domain.events.PaymentCreatedEvent;
 import com.paymentic.domain.events.PaymentOrderEvent;
 import com.paymentic.domain.events.data.CheckoutData;
@@ -23,15 +24,17 @@ public class CheckoutService {
   private final CheckoutRepository checkoutRepository;
   private final ApplicationEventPublisher publisher;
   private final PaymentEventsPublisher eventsBridge;
-
+  private final IdempotencyKeyService idempotencyKeyService;
   public CheckoutService(CheckoutRepository checkoutRepository, ApplicationEventPublisher publisher,
-      PaymentEventsPublisher eventsBridge) {
+      PaymentEventsPublisher eventsBridge, IdempotencyKeyService idempotencyKeyService) {
     this.checkoutRepository = checkoutRepository;
     this.publisher = publisher;
     this.eventsBridge = eventsBridge;
+    this.idempotencyKeyService = idempotencyKeyService;
   }
   @Transactional
   public Checkout process(PaymentRequest request,String idempotencyKey){
+    this.idempotencyKeyService.handleUsage(new IdempotencyKeyRequestUsage(this,idempotencyKey));
     var checkout = Checkout.newCheckoutInitiated(request.getCheckoutId(),new BuyerInfo(request.getBuyerInfo().getDocument(), request.getBuyerInfo().getName()),
         new CardInfo(request.getCreditCardInfo().getCardInfo(),
             request.getCreditCardInfo().getToken()),idempotencyKey);
