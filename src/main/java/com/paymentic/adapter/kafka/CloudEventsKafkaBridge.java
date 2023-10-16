@@ -27,7 +27,6 @@ public class CloudEventsKafkaBridge implements PaymentEventsPublisher {
   private final ObjectMapper mapper;
   private final Logger logger = LoggerFactory.getLogger(CloudEventsKafkaBridge.class);
   private final Timer paymentCreatedTimer;
-
   public CloudEventsKafkaBridge(KafkaTemplate<String, CloudEvent> sender, ObjectMapper mapper,
       MeterRegistry meterRegistry) {
     this.sender = sender;

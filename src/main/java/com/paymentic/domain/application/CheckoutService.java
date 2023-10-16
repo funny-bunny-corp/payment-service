@@ -13,7 +13,10 @@ import com.paymentic.domain.repositories.CheckoutRepository;
 import com.paymentic.domain.shared.BuyerInfo;
 import com.paymentic.domain.shared.CardInfo;
 import com.paymentic.domain.shared.SellerInfo;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
+import org.openapitools.model.PaymentOrders;
 import org.openapitools.model.PaymentRequest;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -33,21 +36,35 @@ public class CheckoutService {
     this.idempotencyKeyService = idempotencyKeyService;
   }
   @Transactional
-  public Checkout process(PaymentRequest request,String idempotencyKey){
-    this.idempotencyKeyService.handleUsage(new IdempotencyKeyRequestUsage(this,idempotencyKey));
-    var checkout = Checkout.newCheckoutInitiated(request.getCheckoutId(),new BuyerInfo(request.getBuyerInfo().getDocument(), request.getBuyerInfo().getName()),
-        new CardInfo(request.getCreditCardInfo().getCardInfo(),
-            request.getCreditCardInfo().getToken()),idempotencyKey);
-    this.checkoutRepository.save(checkout);
-    var payments = request.getPaymentOrders().stream().map(paymentOrder -> {
-      var payment = PaymentOrder.newPaymentInitiated(paymentOrder.getAmount(),paymentOrder.getCurrency(),new CheckoutId(request.getCheckoutId()),new SellerInfo(paymentOrder.getSellerAccount()));
-      this.publisher.publishEvent(new PaymentOrderEvent(this,new CheckoutId(request.getCheckoutId()),payment));
-      return new PaymentOrderData(payment.getId(),payment.getAmount(),payment.getCurrency(),payment.getStatus(),new SellerInfo(
-          paymentOrder.getSellerAccount()),payment.getIdempotencyKey());
-    }).collect(Collectors.toList());
+  public Checkout processPaymentRequest(PaymentRequest request, String idempotencyKey) {
+    IdempotencyKeyRequestUsage idempotencyKeyRequestUsage = new IdempotencyKeyRequestUsage(this, idempotencyKey);
+    idempotencyKeyService.handleUsage(idempotencyKeyRequestUsage);
+    Checkout checkout = createCheckout(request, idempotencyKey);
+    List<PaymentOrderData> paymentOrderDataList = processPaymentOrders(request, checkout);
     var checkoutData = new CheckoutData(checkout.getId(),checkout.getBuyerInfo(),checkout.getCardInfo(),idempotencyKey);
-    this.eventsBridge.paymentCreated(new PaymentCreatedEvent(checkoutData,payments));
+    PaymentCreatedEvent paymentCreatedEvent = new PaymentCreatedEvent(checkoutData, paymentOrderDataList);
+    eventsBridge.paymentCreated(paymentCreatedEvent);
     return checkout;
+  }
+
+  private Checkout createCheckout(PaymentRequest request, String idempotencyKey) {
+    BuyerInfo buyerInfo = new BuyerInfo(request.getBuyerInfo().getDocument(), request.getBuyerInfo().getName());
+    CardInfo cardInfo = new CardInfo(request.getCreditCardInfo().getCardInfo(), request.getCreditCardInfo().getToken());
+    Checkout checkout = Checkout.newCheckoutInitiated(request.getCheckoutId(), buyerInfo, cardInfo, idempotencyKey);
+    checkoutRepository.save(checkout);
+    return checkout;
+  }
+
+  private List<PaymentOrderData> processPaymentOrders(PaymentRequest request, Checkout checkout) {
+    List<PaymentOrderData> paymentOrderDataList = new ArrayList<>();
+    for (PaymentOrders paymentOrder : request.getPaymentOrders()) {
+      PaymentOrder payment = PaymentOrder.newPaymentInitiated(paymentOrder.getAmount(), paymentOrder.getCurrency(),
+          new CheckoutId(request.getCheckoutId()), new SellerInfo(paymentOrder.getSellerAccount()));
+      publisher.publishEvent(new PaymentOrderEvent(this, new CheckoutId(request.getCheckoutId()), payment));
+      paymentOrderDataList.add(new PaymentOrderData(payment.getId(), payment.getAmount(), payment.getCurrency(),
+          payment.getStatus(), new SellerInfo(paymentOrder.getSellerAccount()), payment.getIdempotencyKey()));
+    }
+    return paymentOrderDataList;
   }
 
 }

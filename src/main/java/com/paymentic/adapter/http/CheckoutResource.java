@@ -16,7 +16,7 @@ public class CheckoutResource implements V1Api {
   }
   @Override
   public ResponseEntity<PaymentCreated> createPayment(String idempotencyKey, PaymentRequest paymentRequest) {
-    var paymentCreated = this.checkoutService.process(paymentRequest,idempotencyKey);
+    var paymentCreated = this.checkoutService.processPaymentRequest(paymentRequest,idempotencyKey);
     return new ResponseEntity<>(new PaymentCreated().id(paymentCreated.getId().toString()), HttpStatus.CREATED);
   }
 }
