@@ -96,5 +96,9 @@ public class PaymentOrder {
     this.status = PaymentOrderStatus.EXECUTING;
     return this;
   }
+  public PaymentOrder walletUpdated(){
+    this.isWalletUpdated = Boolean.TRUE;
+    return this;
+  }
 
 }
