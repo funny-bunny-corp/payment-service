@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class PaymentOrderCreationService implements ApplicationListener<PaymentOrderEvent> {
   private final PaymentOrderRepository paymentOrderRepository;
-
   public PaymentOrderCreationService(PaymentOrderRepository paymentOrderRepository) {
     this.paymentOrderRepository = paymentOrderRepository;
   }

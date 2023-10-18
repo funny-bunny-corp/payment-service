@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CloudEventsWalletUpdated {
+
   private static final String TRANSACTION_REGISTERED_EVENT_TYPE = "paymentic.payments-gateway.v1.transaction-registered";
   private static final Logger LOGGER = LoggerFactory.getLogger(CloudEventsWalletUpdated.class);
   private static final String ERROR = "Event %s already handled!!!";
@@ -31,18 +32,19 @@ public class CloudEventsWalletUpdated {
     this.paymentOrderRepository = paymentOrderRepository;
     this.eventService = eventService;
   }
-  @KafkaListener(id = "paymentOrderWalletUpdated",groupId = "payment-service-group-id", topics = "payments")
-  public void listen(CloudEvent message){
-    var handle = this.eventService.shouldHandle(new Event(UUID.fromString(message.getId())));
-    if (handle){
-      if (TRANSACTION_REGISTERED_EVENT_TYPE.equals(message.getType())){
+
+  @KafkaListener(id = "paymentOrderWalletUpdated", topics = "payments")
+  public void listen(CloudEvent message) {
+    if (TRANSACTION_REGISTERED_EVENT_TYPE.equals(message.getType())) {
+      var handle = this.eventService.shouldHandle(new Event(UUID.fromString(message.getId())));
+      if (handle) {
         PojoCloudEventData<WalletUpdatedEvent> deserializedData = CloudEventUtils
             .mapData(message, PojoCloudEventDataMapper.from(mapper, WalletUpdatedEvent.class));
         var walletUpdatedEvent = deserializedData.getValue();
         this.paymentOrderRepository.walletUpdated(UUID.fromString(walletUpdatedEvent.payment().getId()));
+      } else {
+        LOGGER.error(String.format(ERROR, message.getId()));
       }
-    }else {
-      LOGGER.error(String.format(ERROR, message.getId()));
     }
   }
 

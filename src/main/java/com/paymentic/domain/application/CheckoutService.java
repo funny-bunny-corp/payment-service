@@ -3,6 +3,7 @@ package com.paymentic.domain.application;
 import com.paymentic.domain.Checkout;
 import com.paymentic.domain.CheckoutId;
 import com.paymentic.domain.PaymentOrder;
+import com.paymentic.domain.events.CheckoutClosedEvent;
 import com.paymentic.domain.events.IdempotencyKeyRequestUsage;
 import com.paymentic.domain.events.PaymentCreatedEvent;
 import com.paymentic.domain.events.PaymentOrderEvent;
@@ -15,15 +16,18 @@ import com.paymentic.domain.shared.CardInfo;
 import com.paymentic.domain.shared.SellerInfo;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.openapitools.model.PaymentOrders;
 import org.openapitools.model.PaymentRequest;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class CheckoutService {
+public class CheckoutService implements ApplicationListener<CheckoutClosedEvent> {
   private final CheckoutRepository checkoutRepository;
   private final ApplicationEventPublisher publisher;
   private final PaymentEventsPublisher eventsBridge;
@@ -46,7 +50,6 @@ public class CheckoutService {
     eventsBridge.paymentCreated(paymentCreatedEvent);
     return checkout;
   }
-
   private Checkout createCheckout(PaymentRequest request, String idempotencyKey) {
     BuyerInfo buyerInfo = new BuyerInfo(request.getBuyerInfo().getDocument(), request.getBuyerInfo().getName());
     CardInfo cardInfo = new CardInfo(request.getCreditCardInfo().getCardInfo(), request.getCreditCardInfo().getToken());
@@ -66,5 +69,10 @@ public class CheckoutService {
     }
     return paymentOrderDataList;
   }
-
+  @Override
+  public void onApplicationEvent(CheckoutClosedEvent event) {
+    Optional<Checkout> checkout = this.checkoutRepository.findById(
+        UUID.fromString(event.getCheckoutId().getId()));
+    checkout.ifPresent(chk -> this.checkoutRepository.save(chk.markDone()));
+  }
 }

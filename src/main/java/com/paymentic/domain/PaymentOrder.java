@@ -11,12 +11,10 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import java.util.UUID;
-import org.apache.kafka.common.protocol.types.Field.Str;
 
 @Entity(name = "payment_order")
 public class PaymentOrder {
   private static final String IDEMPOTENCY_PATTERN = "%s-%s";
-
   @Id
   @Column(name = "payment_order_id")
   private UUID id;
@@ -34,13 +32,11 @@ public class PaymentOrder {
       @AttributeOverride(name="id",column=@Column(name="checkout_id"))
   })
   private CheckoutId checkout;
-
   @Embedded
   @AttributeOverrides({
       @AttributeOverride(name="sellerId",column=@Column(name="seller_id"))
   })
   private SellerInfo sellerInfo;
-
   @Column(name = "idempotency_key")
   private String idempotencyKey;
 
@@ -92,12 +88,24 @@ public class PaymentOrder {
   public String getIdempotencyKey() {
     return idempotencyKey;
   }
-  public PaymentOrder markStarted(){
+  public PaymentOrder markExecuting(){
     this.status = PaymentOrderStatus.EXECUTING;
+    return this;
+  }
+  public PaymentOrder markApproved(){
+    this.status = PaymentOrderStatus.SUCCESS;
+    return this;
+  }
+  public PaymentOrder markFailed(){
+    this.status = PaymentOrderStatus.FAILED;
     return this;
   }
   public PaymentOrder walletUpdated(){
     this.isWalletUpdated = Boolean.TRUE;
+    return this;
+  }
+  public PaymentOrder booked(){
+    this.isLedgerUpdated = Boolean.TRUE;
     return this;
   }
 

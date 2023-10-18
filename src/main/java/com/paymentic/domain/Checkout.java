@@ -1,5 +1,6 @@
 package com.paymentic.domain;
 
+import com.paymentic.domain.exception.CheckoutAlreadyClosed;
 import com.paymentic.domain.shared.BuyerInfo;
 import com.paymentic.domain.shared.CardInfo;
 import jakarta.persistence.AttributeOverride;
@@ -44,10 +45,16 @@ public class Checkout {
     this.isPaymentDone = isPaymentDone;
     this.id = id;
     this.idempotencyKey = idempotencyKey;
-
   }
   public static Checkout newCheckoutInitiated(String id,BuyerInfo buyerInfo, CardInfo cardInfo,String idempotencyKey){
     return new Checkout(UUID.fromString(id),buyerInfo,cardInfo,false,idempotencyKey);
+  }
+  public Checkout markDone(){
+    if (this.isPaymentDone){
+      throw new CheckoutAlreadyClosed();
+    }
+    this.isPaymentDone = true;
+    return this;
   }
   public BuyerInfo getBuyerInfo() {
     return buyerInfo;
