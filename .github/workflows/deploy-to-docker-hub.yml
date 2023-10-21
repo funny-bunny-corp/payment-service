@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
+      - name: Java version
+        run:  java -version
       - name: Build and test
         run: ./mvnw clean package
       - name: Log in to Docker Hub
