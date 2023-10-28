@@ -36,7 +36,6 @@ channels:
       message:
         $ref: '#/components/messages/cePaymentStartedEvent'
 
-
   paymentsOrderDeclined:
     bindings:
       kafka:
@@ -160,7 +159,6 @@ components:
       properties:
         data:
           $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payments/payments-gateway.v1.payment-created.json'
-
 
     paymentOrderRegisteredInWalletEvent:
       type: object
