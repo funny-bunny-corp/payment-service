@@ -38,7 +38,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: 8081
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -70,6 +70,11 @@ spec:
                 secretKeyRef:
                   name: {{ include "payment-service.fullname" . }}
                   key: username
+            - name: JAAS_CONFIG
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "payment-service.fullname" . }}
+                  key: kafka_jaas
             - name: OTEL_RESOURCE_ATTRIBUTES
               valueFrom:
                 configMapKeyRef:

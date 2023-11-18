@@ -34,3 +34,7 @@ build/
 
 ### Portman stuff
 /src/main/resources/oas/tmp
+
+
+## Helm PROD
+deployments/payment-service/values-prod.yaml
