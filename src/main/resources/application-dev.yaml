@@ -30,8 +30,6 @@ management:
       probability: 1.0
     enabled: true
   otlp:
-    tracing:
-      endpoint:
     metrics:
       export:
         resource-attributes:

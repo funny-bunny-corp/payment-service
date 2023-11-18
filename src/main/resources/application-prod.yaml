@@ -10,7 +10,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
-
   kafka:
     bootstrap-servers: pkc-p11xm.us-east-1.aws.confluent.cloud:9092
     consumer:
@@ -24,15 +23,12 @@ spring:
         mechanism: PLAIN
 server:
   port: 8081
-
 management:
   tracing:
     sampling:
       probability: 1.0
     enabled: true
   otlp:
-    tracing:
-      endpoint:
     metrics:
       export:
         resource-attributes:

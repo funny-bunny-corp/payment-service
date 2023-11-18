@@ -1,4 +1,9 @@
 ## database configurations
 db:
-  user:
-  pass:
+  user: cG9zdGdyZXM=
+  pass: cG9zdGdyZXM=
+  url: amRiYzpwb3N0Z3Jlc3FsOi8vcG9zdGdyZXNxbC5kYXRhYmFzZTo1NDMyL3Bvc3RncmVz
+
+## Spring profile
+profile: prod
+
