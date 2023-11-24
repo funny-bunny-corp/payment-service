@@ -2,6 +2,7 @@ package com.paymentic.adapter.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymentic.domain.events.PaymentCreatedEvent;
+import com.paymentic.domain.events.PaymentDoneEvent;
 import com.paymentic.domain.events.publisher.PaymentEventsPublisher;
 import com.paymentic.infra.ce.CExtensions;
 import com.paymentic.infra.ce.CExtensions.Audience;
@@ -47,6 +48,23 @@ public class CloudEventsKafkaBridge implements PaymentEventsPublisher {
     Supplier<CompletableFuture<Void>> messageSupplier = () -> this.sender.send(TopicNames.PAYMENTS.topicName(), ce)
         .thenRun(() -> logger.info("Message sent. Id: {}; Data: {}", ce.getId(), event));
     this.paymentCreatedTimer.record(messageSupplier);
+  }
+
+  @Override
+  public void paymentDone(PaymentDoneEvent event) {
+    var ce = CloudEventBuilder.v1()
+        .withId(UUID.randomUUID().toString())
+        .withSource(URI.create(event.source()))
+        .withSubject(event.subject())
+        .withType(event.type())
+        .withData(PojoCloudEventData.wrap(event, mapper::writeValueAsBytes))
+        .withExtension(CExtensions.AUDIENCE.extensionName(), Audience.EXTERNAL_BOUNDED_CONTEXT.audienceName())
+        .withExtension(CExtensions.EVENT_CONTEXT.extensionName(), EventContext.DOMAIN.eventContextName())
+        .build();
+    Supplier<CompletableFuture<Void>> messageSupplier = () -> this.sender.send(TopicNames.PAYMENTS.topicName(), ce)
+        .thenRun(() -> logger.info("Message sent. Id: {}; Data: {}", ce.getId(), event));
+    this.paymentCreatedTimer.record(messageSupplier);
+
   }
 
 }

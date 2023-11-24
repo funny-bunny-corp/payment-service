@@ -1,8 +1,11 @@
 package com.paymentic.adapter.http;
 
 import com.paymentic.domain.Checkout;
+import com.paymentic.domain.PaymentOrderStatus;
 import com.paymentic.domain.application.CheckoutService;
+import com.paymentic.domain.application.PaymentOrderService;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.openapitools.api.V1Api;
 import org.openapitools.model.PaymentCreated;
 import org.openapitools.model.PaymentData;
@@ -16,8 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CheckoutResource implements V1Api {
   private final CheckoutService checkoutService;
-  public CheckoutResource(CheckoutService checkoutService) {
+  private final PaymentOrderService paymentOrderService;
+  public CheckoutResource(CheckoutService checkoutService, PaymentOrderService paymentOrderService) {
     this.checkoutService = checkoutService;
+    this.paymentOrderService = paymentOrderService;
   }
   @Override
   public ResponseEntity<PaymentCreated> createPayment(String idempotencyKey, PaymentRequest paymentRequest) {
@@ -34,6 +39,12 @@ public class CheckoutResource implements V1Api {
 
   @Override
   public ResponseEntity<List<PaymentOrder>> getPaymentOrders(String id) {
-    return V1Api.super.getPaymentOrders(id);
+    var orders = this.paymentOrderService.ordersFromCheckout(id).stream().map( o ->new PaymentOrder().id(o.getId().toString()).status(convert(o.getStatus()))).collect(
+        Collectors.toList());
+    return ResponseEntity.ok(orders);
   }
+  private PaymentOrder.StatusEnum convert(PaymentOrderStatus status){
+    return PaymentOrder.StatusEnum.valueOf(status.name());
+  }
+
 }
