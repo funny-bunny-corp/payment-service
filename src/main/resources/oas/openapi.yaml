@@ -49,6 +49,46 @@ paths:
           type: string
         in: header
         required: true
+  '/v1/payments/{id}':
+    get:
+      tags:
+        - payments
+      parameters:
+        -
+          name: id
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payment-data'
+          description: Retrieve Payment Data
+      operationId: get-payment
+  '/v1/payments/{id}/payment-orders':
+    get:
+      tags:
+        - payment-orders
+      parameters:
+        -
+          name: id
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/payment-order'
+          description: GEt payment orders
+      operationId: get-payment-orders
 components:
   schemas:
     buyer-info:
@@ -217,6 +257,42 @@ components:
             amount: '20.48'
             currency: BRL
             payment_order_id: 28c808e4-3917-11ee-8fea-325096b39f47
+    payment-data:
+      title: Root Type for payment-data
+      description: ''
+      required:
+        - status
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          enum:
+            - DONE
+            - IN_PROGRESS
+          type: string
+      example:
+        id: 01a0267a-c054-450d-9f77-e1b58caf1b28
+        status: DONE
+    payment-order:
+      title: Root Type for payment-order
+      description: ''
+      required:
+        - status
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          enum:
+            - NOT_STARTED
+            - EXECUTING
+            - SUCCESS
+            - FAILED
+          type: string
+      example:
+        id: 01a0267a-c054-450d-9f77-e1b58caf1b28
+        status: NOT_STARTED
   responses:
     res-500:
       content:

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.apache.kafka.common.protocol.types.Field.Str;
 import org.openapitools.model.PaymentOrders;
 import org.openapitools.model.PaymentRequest;
 import org.springframework.context.ApplicationEventPublisher;
@@ -75,4 +76,9 @@ public class CheckoutService implements ApplicationListener<CheckoutClosedEvent>
         UUID.fromString(event.getCheckoutId().getId()));
     checkout.ifPresent(chk -> this.checkoutRepository.save(chk.markDone()));
   }
+  public Checkout getById(String id){
+    Optional<Checkout> checkout = this.checkoutRepository.findById(UUID.fromString(id));
+    return checkout.get();
+  }
+
 }
