@@ -33,7 +33,7 @@ public class CloudEventsWalletUpdated {
     this.eventService = eventService;
   }
 
-  @KafkaListener(id = "paymentOrderWalletUpdated", topics = "payments",autoStartup = "false")
+  @KafkaListener(id = "paymentOrderWalletUpdated", topics = "payments")
   public void listen(CloudEvent message) {
     if (TRANSACTION_REGISTERED_EVENT_TYPE.equals(message.getType())) {
       var handle = this.eventService.shouldHandle(new Event(UUID.fromString(message.getId())));

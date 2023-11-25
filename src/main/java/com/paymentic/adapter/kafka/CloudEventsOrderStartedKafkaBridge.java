@@ -33,7 +33,7 @@ public class CloudEventsOrderStartedKafkaBridge {
     this.eventService = eventService;
   }
 
-  @KafkaListener(id = "paymentOrderStarted", topics = "payments",autoStartup = "false")
+  @KafkaListener(id = "paymentOrderStarted", topics = "payments")
   public void listen(CloudEvent message) {
     if (PAYMENT_ORDER_STARTED_EVENT_TYPE.equals(message.getType())) {
       var handle = this.eventService.shouldHandle(new Event(UUID.fromString(message.getId())));
