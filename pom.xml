@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.4</version>
+		<version>3.2.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>paymentic</groupId>
@@ -14,7 +14,7 @@
 	<name>payment-service</name>
 	<description>payment-service</description>
 	<properties>
-		<java.version>20</java.version>
+		<java.version>21</java.version>
     <opentelemetry.version>1.30.0</opentelemetry.version>
 	</properties>
 	<dependencies>
