@@ -7,6 +7,3 @@ db:
 ## Spring profile
 profile: dev
 
-## Kafka Jaas
-kafka:
-  jaas: add_here

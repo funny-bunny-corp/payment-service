@@ -19,7 +19,7 @@ spring:
         protocol: SASL_SSL
       sasl:
         jaas:
-          config: ${JAAS_CONFIG}
+          config:
         mechanism: PLAIN
 server:
   port: 8081
