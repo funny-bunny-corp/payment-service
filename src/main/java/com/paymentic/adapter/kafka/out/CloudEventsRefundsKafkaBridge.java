@@ -1,9 +1,8 @@
-package com.paymentic.adapter.kafka;
+package com.paymentic.adapter.kafka.out;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.paymentic.domain.events.PaymentCreatedEvent;
-import com.paymentic.domain.events.PaymentDoneEvent;
-import com.paymentic.domain.events.publisher.PaymentEventsPublisher;
+import com.paymentic.domain.events.RefundCreatedEvent;
+import com.paymentic.domain.events.publisher.RefundEventsPublisher;
 import com.paymentic.infra.ce.CExtensions;
 import com.paymentic.infra.ce.CExtensions.Audience;
 import com.paymentic.infra.ce.CExtensions.EventContext;
@@ -23,35 +22,20 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CloudEventsKafkaBridge implements PaymentEventsPublisher {
+public class CloudEventsRefundsKafkaBridge implements RefundEventsPublisher {
   private final KafkaTemplate<String, CloudEvent> sender;
   private final ObjectMapper mapper;
-  private final Logger logger = LoggerFactory.getLogger(CloudEventsKafkaBridge.class);
-  private final Timer paymentCreatedTimer;
-  public CloudEventsKafkaBridge(KafkaTemplate<String, CloudEvent> sender, ObjectMapper mapper,
+  private final Logger logger = LoggerFactory.getLogger(CloudEventsRefundsKafkaBridge.class);
+  private final Timer refundCreatedTimer;
+  public CloudEventsRefundsKafkaBridge(KafkaTemplate<String, CloudEvent> sender, ObjectMapper mapper,
       MeterRegistry meterRegistry) {
     this.sender = sender;
     this.mapper = mapper;
-    this.paymentCreatedTimer = meterRegistry.timer("payment_created_message","broker","kafka");
-  }
-  @Override
-  public void paymentCreated(PaymentCreatedEvent event) {
-      var ce = CloudEventBuilder.v1()
-          .withId(UUID.randomUUID().toString())
-          .withSource(URI.create(event.source()))
-          .withSubject(event.subject())
-          .withType(event.type())
-          .withData(PojoCloudEventData.wrap(event, mapper::writeValueAsBytes))
-          .withExtension(CExtensions.AUDIENCE.extensionName(), Audience.EXTERNAL_BOUNDED_CONTEXT.audienceName())
-          .withExtension(CExtensions.EVENT_CONTEXT.extensionName(), EventContext.DOMAIN.eventContextName())
-          .build();
-    Supplier<CompletableFuture<Void>> messageSupplier = () -> this.sender.send(TopicNames.PAYMENTS.topicName(), ce)
-        .thenRun(() -> logger.info("Message sent. Id: {}; Data: {}", ce.getId(), event));
-    this.paymentCreatedTimer.record(messageSupplier);
+    this.refundCreatedTimer = meterRegistry.timer("refund_created_message","broker","kafka");
   }
 
   @Override
-  public void paymentDone(PaymentDoneEvent event) {
+  public void refundCreated(RefundCreatedEvent event) {
     var ce = CloudEventBuilder.v1()
         .withId(UUID.randomUUID().toString())
         .withSource(URI.create(event.source()))
@@ -63,8 +47,6 @@ public class CloudEventsKafkaBridge implements PaymentEventsPublisher {
         .build();
     Supplier<CompletableFuture<Void>> messageSupplier = () -> this.sender.send(TopicNames.PAYMENTS.topicName(), ce)
         .thenRun(() -> logger.info("Message sent. Id: {}; Data: {}", ce.getId(), event));
-    this.paymentCreatedTimer.record(messageSupplier);
-
+    this.refundCreatedTimer.record(messageSupplier);
   }
-
 }

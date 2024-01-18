@@ -1,7 +1,6 @@
-package com.paymentic.adapter.kafka;
+package com.paymentic.adapter.kafka.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.paymentic.domain.events.PaymentOrderStartedEvent;
 import com.paymentic.domain.events.data.TransactionProcessedEvent;
 import com.paymentic.domain.repositories.PaymentOrderRepository;
 import com.paymentic.infra.events.Event;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CloudEventsOrderDeclinedKafkaBridge {
-
   private static final String PAYMENT_ORDER_DECLINED_EVENT_TYPE = "paymentic.payments.gateway.v1.payment.order.declined";
   private static final Logger LOGGER = LoggerFactory.getLogger(
       CloudEventsOrderDeclinedKafkaBridge.class);
@@ -26,14 +24,12 @@ public class CloudEventsOrderDeclinedKafkaBridge {
   private final ObjectMapper mapper;
   private final PaymentOrderRepository paymentOrderRepository;
   private final EventService eventService;
-
   public CloudEventsOrderDeclinedKafkaBridge(ObjectMapper mapper,
       PaymentOrderRepository paymentOrderRepository, EventService eventService) {
     this.mapper = mapper;
     this.paymentOrderRepository = paymentOrderRepository;
     this.eventService = eventService;
   }
-
   @KafkaListener(id = "paymentOrderDeclined", topics = "payments")
   public void listen(CloudEvent message) {
     if (PAYMENT_ORDER_DECLINED_EVENT_TYPE.equals(message.getType())) {

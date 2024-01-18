@@ -1,8 +1,7 @@
-package com.paymentic.adapter.kafka;
+package com.paymentic.adapter.kafka.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymentic.domain.events.PaymentOrderBookedEvent;
-import com.paymentic.domain.events.data.PaymentOrderId;
 import com.paymentic.domain.events.data.TransactionBooked;
 import com.paymentic.domain.repositories.PaymentOrderRepository;
 import com.paymentic.infra.events.Event;

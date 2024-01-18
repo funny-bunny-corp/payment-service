@@ -1,4 +1,4 @@
-package com.paymentic.adapter.http;
+package com.paymentic.adapter.http.in;
 
 import com.paymentic.domain.Checkout;
 import com.paymentic.domain.PaymentOrderStatus;
@@ -6,7 +6,7 @@ import com.paymentic.domain.application.CheckoutService;
 import com.paymentic.domain.application.PaymentOrderService;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.openapitools.api.V1Api;
+import org.openapitools.api.PaymentsApi;
 import org.openapitools.model.PaymentCreated;
 import org.openapitools.model.PaymentData;
 import org.openapitools.model.PaymentData.StatusEnum;
@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class CheckoutResource implements V1Api {
+public class CheckoutResource implements PaymentsApi {
   private final CheckoutService checkoutService;
   private final PaymentOrderService paymentOrderService;
   public CheckoutResource(CheckoutService checkoutService, PaymentOrderService paymentOrderService) {

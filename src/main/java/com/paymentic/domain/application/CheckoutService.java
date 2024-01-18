@@ -58,7 +58,6 @@ public class CheckoutService implements ApplicationListener<CheckoutClosedEvent>
     checkoutRepository.save(checkout);
     return checkout;
   }
-
   private List<PaymentOrderData> processPaymentOrders(PaymentRequest request, Checkout checkout) {
     List<PaymentOrderData> paymentOrderDataList = new ArrayList<>();
     for (PaymentOrders paymentOrder : request.getPaymentOrders()) {

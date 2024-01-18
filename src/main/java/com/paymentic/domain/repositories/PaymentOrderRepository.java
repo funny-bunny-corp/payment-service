@@ -20,7 +20,7 @@ public interface PaymentOrderRepository extends CrudRepository<PaymentOrder, UUI
   default CheckoutId booked(UUID id){
     var paymentOrder = this.findById(id);
     if (paymentOrder.isPresent()){
-      return this.save(paymentOrder.get()).getCheckout();
+      return this.save(paymentOrder.get().booked()).getCheckout();
     }
     throw new PaymentOrderNotFound();
   }

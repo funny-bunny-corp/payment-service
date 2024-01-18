@@ -1,7 +1,6 @@
-package com.paymentic.adapter.kafka;
+package com.paymentic.adapter.kafka.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.paymentic.domain.events.PaymentOrderStartedEvent;
 import com.paymentic.domain.events.WalletUpdatedEvent;
 import com.paymentic.domain.repositories.PaymentOrderRepository;
 import com.paymentic.infra.events.Event;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CloudEventsWalletUpdated {
-
   private static final String TRANSACTION_REGISTERED_EVENT_TYPE = "paymentic.payments-gateway.v1.transaction-registered";
   private static final Logger LOGGER = LoggerFactory.getLogger(CloudEventsWalletUpdated.class);
   private static final String ERROR = "Event %s already handled!!!";

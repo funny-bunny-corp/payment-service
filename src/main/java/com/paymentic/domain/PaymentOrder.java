@@ -108,5 +108,9 @@ public class PaymentOrder {
     this.isLedgerUpdated = Boolean.TRUE;
     return this;
   }
+  public PaymentOrder refunded(){
+    this.status = PaymentOrderStatus.REFUNDED;
+    return this;
+  }
 
 }

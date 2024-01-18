@@ -2,7 +2,10 @@ openapi: 3.0.2
 info:
   title: Paymentic Payments APIs
   version: 1.0.0
-  description: It enable payments in PAYMENTIC platform
+  description: >-
+    This API enables seamless integration with the PAYMENTIC platform, allowing clients to initiate and
+    manage payment transactions.  It offers endpoints for creating payment requests, retrieving payment
+    data, and managing payment orders.
   contact:
     name: Claudio E. de Oliveira
     email: claudioed.oliveira@gmail.com
@@ -10,9 +13,14 @@ info:
     name: Apache 2.0
     url: 'https://www.apache.org/licenses/LICENSE-2.0'
 paths:
-  /v1/payments:
+  /payments:
     post:
       requestBody:
+        description: >
+          The request body must include all necessary payment details as defined in the
+          'payment-request' schema. This includes buyer information, credit card details, and order
+          specifics. The API expects this data in JSON format. Ensuring accurate and complete
+          information is key to successful payment processing.
         content:
           application/json:
             schema:
@@ -26,55 +34,64 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/payment-created'
-          description: Payment created successfully
+          description: >
+            Indicates that the payment request has been successfully created. The response
+            includes details of the newly created payment, such as the payment ID, confirming that
+            the transaction has been initiated and is being processed.
         '401':
           $ref: '#/components/responses/res-401'
+          description: >-
+            Unauthorized access. This response is returned when authentication credentials are
+            missing or invalid.
         '403':
           $ref: '#/components/responses/res-403'
+          description: >-
+            Forbidden access. This indicates that the client lacks the necessary permissions for
+            creating a payment request.
         '422':
           $ref: '#/components/responses/res-422'
+          description: >-
+            Unprocessable Entity. The request was well-formed but was unable to be followed due to
+            semantic errors.
         '500':
           $ref: '#/components/responses/res-500'
+          description: >-
+            Internal Server Error. This indicates an unexpected condition was encountered on the
+            server preventing it from fulfilling the request.
       security:
         -
           hydra:
             - payments.write
       operationId: create-payment
-      summary: It creates a payment request
+      summary: Create a Payment Request
+      description: >
+        This endpoint facilitates the initiation of a new payment transaction. Clients can submit
+        payment details, including buyer information, payment method, and transaction amount, to
+        create a payment request. The endpoint processes the provided details, performs validation,
+        and if successful, registers a new payment transaction in the system. This is a critical
+        functionality for enabling financial transactions through the API, offering a streamlined and
+        secure process for handling payments.
     parameters:
       -
         name: Idempotency-Key
-        description: ''
+        description: >
+          A unique key used to prevent duplicate transactions in case of multiple requests. This key
+          ensures that retrying the same payment request does not result in multiple transactions.
         schema:
           type: string
         in: header
         required: true
-  '/v1/payments/{id}':
-    get:
-      tags:
-        - payments
-      parameters:
-        -
-          name: id
-          schema:
-            type: string
-          in: path
-          required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/payment-data'
-          description: Retrieve Payment Data
-      operationId: get-payment
-  '/v1/payments/{id}/payment-orders':
+  '/payments/{id}/payment-orders':
     get:
       tags:
         - payment-orders
       parameters:
         -
           name: id
+          description: >
+            The unique identifier of the payment transaction. This ID is used to fetch all
+            associated payment orders. It should be a string that uniquely identifies a payment
+            transaction within the system.
           schema:
             type: string
           in: path
@@ -87,8 +104,130 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/payment-order'
-          description: GEt payment orders
+          description: >
+            A successful response returns a list of payment orders associated with the provided
+            payment ID. Each item in the array represents a payment order, containing detailed
+            information as defined in the 'payment-order' schema. This response is crucial for
+            understanding the breakdown of individual orders within a single payment transaction.
+        '401':
+          $ref: '#/components/responses/res-401'
+          description: >-
+            Unauthorized access. Indicates that the client's request lacks valid authentication
+            credentials.
+        '403':
+          $ref: '#/components/responses/res-403'
+          description: >-
+            Forbidden access. Suggests that the client does not have the necessary permissions to
+            access the requested payment orders.
+        '500':
+          $ref: '#/components/responses/res-500'
+          description: >-
+            Internal Server Error. Represents a general error when the server encounters an
+            unexpected condition that prevents it from fulfilling the request.
       operationId: get-payment-orders
+      description: >
+        This endpoint retrieves a list of payment orders associated with a given payment ID. It's
+        designed to provide comprehensive details about each payment order, including statuses and
+        transaction details. This functionality is crucial for clients who need to track and manage
+        multiple payment orders under a single transaction or payment process. The endpoint ensures
+        easy access to payment order information, which is essential for reconciliation, reporting, or
+        customer service inquiries.
+  '/payments/{id}':
+    get:
+      tags:
+        - payments
+      parameters:
+        -
+          name: id
+          description: >
+            The unique identifier for the payment transaction. This ID should be provided in the
+            request path to fetch the corresponding payment details. It is essential for
+            accurately pinpointing the specific transaction for which information is being
+            requested.
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payment-data'
+          description: >
+            A successful response includes a detailed representation of the payment transaction
+            associated with the provided ID. The response will contain all relevant data as
+            defined in the 'payment-data' schema, offering a complete view of the payment's
+            attributes, such as its status, amount, participants, and other pertinent details.
+            This response is key for clients who need to closely track and analyze their payment
+            transactions.
+      operationId: get-payment
+      description: >
+        This endpoint is designed for retrieving detailed information about a specific payment
+        transaction. By providing the unique payment ID, clients can access comprehensive data related
+        to a particular payment, such as transaction status, amount, date, and other relevant details.
+        This functionality is crucial for monitoring individual payment transactions, performing
+        audits, or addressing customer inquiries. It ensures transparency and ease of access to
+        payment information, contributing to effective transaction management and client satisfaction.
+  /refunds:
+    post:
+      requestBody:
+        description: >
+          The request body must include the details of the refund to be processed. This includes the
+          unique ID of the original payment transaction and the specific amount that needs to be
+          refunded. The request can also include an optional reason for the refund, aiding in
+          maintaining comprehensive transaction records.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/refund-request'
+        required: true
+      tags:
+        - refunds
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/refund-response'
+          description: >
+            The response indicates that the refund request has been accepted and is currently
+            being processed. A successful response will include a unique refund transaction ID,
+            which can be used to track the status of the refund. Note that this response does not
+            imply the completion of the refund, but rather the initiation of the refund process.
+        '401':
+          $ref: '#/components/responses/res-401'
+          description: Unauthorized access. The client failed to provide valid authentication credentials.
+        '403':
+          $ref: '#/components/responses/res-403'
+          description: Forbidden access. The client does not have permission to perform the refund request.
+        '422':
+          $ref: '#/components/responses/res-422'
+          description: >-
+            Unprocessable Entity. The request contains valid data but it cannot be processed,
+            possibly due to business logic conditions.
+        '500':
+          $ref: '#/components/responses/res-500'
+          description: >-
+            Internal Server Error. An unexpected error occurred on the server while processing the
+            refund request.
+      operationId: create-refund
+      summary: Request a Refund
+      description: >
+        This endpoint allows clients to request a refund for a previously completed payment. It
+        requires details of the original payment and the amount to be refunded. The refund process
+        involves validating the original transaction, ensuring the refund amount is appropriate, and
+        then initiating the refund process. The endpoint is designed to handle refunds in a secure
+    parameters:
+      -
+        name: Idempotency-Key
+        description: >
+          A unique key used to prevent duplicate transactions in case of multiple requests. This key
+          ensures that retrying the same payment request does not result in multiple transactions.
+        schema:
+          type: string
+        in: header
+        required: true
 components:
   schemas:
     buyer-info:
@@ -208,6 +347,44 @@ components:
         amount: '20.48'
         currency: BRL
         payment_order_id: 28c808e4-3917-11ee-8fea-325096b39f47
+    refund-request:
+      required:
+        - payment_id
+        - amount
+        - currency
+      type: object
+      properties:
+        payment_id:
+          description: The unique identifier of the original payment transaction to be refunded.
+          type: string
+        amount:
+          description: >-
+            The amount to be refunded. This must be equal to or less than the original transaction
+            amount.
+          type: string
+        reason:
+          description: An optional description of the reason for the refund.
+          type: string
+        currency:
+          description: The currency of this transaction
+          type: string
+      example:
+        payment_id: '123456789'
+        amount: '100.00'
+        reason: Product returned by customer
+        currency: BRL
+    refund-response:
+      type: object
+      properties:
+        refund_id:
+          description: The unique identifier of the refund transaction.
+          type: string
+        status:
+          description: The current status of the refund request.
+          type: string
+      example:
+        refund_id: '987654321'
+        status: Processing
     payment-request:
       title: payment-request
       description: ''
@@ -331,3 +508,6 @@ tags:
   -
     name: payments
     description: Payments Operations
+  -
+    name: refunds
+    description: Refunds Operations
