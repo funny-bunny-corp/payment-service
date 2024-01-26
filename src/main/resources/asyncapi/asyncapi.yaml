@@ -6,7 +6,7 @@ info:
 defaultContentType: application/cloudevents+json; charset=UTF-8
 channels:
 
-  payments:
+  checkoutCreated:
     bindings:
       kafka:
         topic: 'payments'
@@ -20,6 +20,21 @@ channels:
       operationId: paymentRequested
       message:
         $ref: '#/components/messages/cePaymentCreatedEvent'
+
+  refundCreated:
+    bindings:
+      kafka:
+        topic: 'payments'
+        partitions: 3
+        replicas: 3
+        bindingVersion: '0.4.0'
+    description: The topic on which refund may be consumed.
+    subscribe:
+      summary: >-
+        This application stands as the cornerstone in managing transaction reversals, expertly initiating the refund process. Upon receiving a refund request, it meticulously generates events to navigate the complexities of reversing a payment. The interface, intuitive and user-focused, allows customers or systems to specify refund details effortlessly. Triggering a well-orchestrated series of actions, it ensures that the refund operation is processed with precision and reliability. This functionality not only enhances customer trust by addressing their post-transaction needs but also showcases the system's adaptability to handle transactional contingencies. At its essence, this component embodies the fusion of responsive design and sophisticated technological execution, making the refund process as straightforward and user-friendly as the original payment transaction.
+      operationId: refundRequested
+      message:
+        $ref: '#/components/messages/ceRefundCreatedEvent'
 
   paymentsOrderStarted:
     bindings:
@@ -95,12 +110,21 @@ components:
 
     cePaymentCreatedEvent:
       name: paymentCreatedEvent
-      title: Payment Created
+      title: Checkout Created
       summary: >-
         A Payment Request Creation Message is the starting point in the digital transaction journey. It signifies that a request to initiate a payment has been successfully created, setting the stage for further processing. With vital information like the request ID, creation timestamp, intended recipient, and the stipulated amount, this message acts as an initial assurance to the payer of the impending transaction. By broadcasting this preliminary step, businesses and platforms offer transparency right from the get-go, laying a foundation of trust for the subsequent stages of the payment process. Essentially, this message encapsulates the promise of a smooth, organized, and transparent financial interaction.
       contentType: application/cloudevents+json; charset=UTF-8
       payload:
         $ref: '#/components/schemas/paymentCreatedEvent'
+
+    ceRefundCreatedEvent:
+      name: refundCreatedEvent
+      title: Refund Created
+      summary: >-
+        Triggered when a customer initiates a refund request for a transaction.
+      contentType: application/cloudevents+json; charset=UTF-8
+      payload:
+        $ref: '#/components/schemas/refundCreated'
 
     cePaymentStartedEvent:
       name: paymentStartedEvent
@@ -160,13 +184,21 @@ components:
         data:
           $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payments/payments-gateway.v1.payment-created.json'
 
+    refundCreated:
+      type: object
+      allOf:
+        - $ref: 'https://raw.githubusercontent.com/cloudevents/spec/v1.0.1/spec.json'
+      properties:
+        data:
+          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payments/payments-gateway.v1.refund-created.json'
+
     paymentOrderRegisteredInWalletEvent:
       type: object
       allOf:
         - $ref: 'https://raw.githubusercontent.com/cloudevents/spec/v1.0.1/spec.json'
       properties:
         data:
-          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/transactions/payments-gateway.v1.transaction-wallet-registered.json'
+          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/wallet/payments-gateway.v1.transaction-wallet-registered.json'
 
     paymentOrderStartedEvent:
       type: object
@@ -182,7 +214,7 @@ components:
         - $ref: 'https://raw.githubusercontent.com/cloudevents/spec/v1.0.1/spec.json'
       properties:
         data:
-          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/transactions/payments-gateway.v1.transaction-booked.json'
+          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/ledger/payments-gateway.v1.transaction-booked.json'
 
     paymentsOrderApproved:
       type: object
