@@ -33,7 +33,6 @@ public class CloudEventsRefundsKafkaBridge implements RefundEventsPublisher {
     this.mapper = mapper;
     this.refundCreatedTimer = meterRegistry.timer("refund_created_message","broker","kafka");
   }
-
   @Override
   public void refundCreated(RefundCreatedEvent event) {
     var ce = CloudEventBuilder.v1()

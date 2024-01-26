@@ -504,6 +504,8 @@ security:
     hydra:
       - payments.write
       - payments.read
+      - refunds.write
+      - refunds.read
 tags:
   -
     name: payments
