@@ -6,7 +6,7 @@ info:
 defaultContentType: application/cloudevents+json; charset=UTF-8
 channels:
 
-  checkoutCreated:
+  paymentCreated:
     bindings:
       kafka:
         topic: 'payments'
@@ -20,6 +20,21 @@ channels:
       operationId: paymentRequested
       message:
         $ref: '#/components/messages/cePaymentCreatedEvent'
+
+  paymentDone:
+    bindings:
+      kafka:
+        topic: 'payments'
+        partitions: 3
+        replicas: 3
+        bindingVersion: '0.4.0'
+    description: When the payment is ready
+    subscribe:
+      summary: >-
+        This application acts as the pivotal point in finalizing the digital payment journey, adeptly handling events that conclude the payment transaction flow. With an emphasis on user experience and system efficiency, it skillfully captures and processes the completion details of transactions. Upon the successful completion of a payment, this system promptly triggers a series of events that signify the end of the payment process.
+      operationId: paymentDone
+      message:
+        $ref: '#/components/messages/cePaymentDone'
 
   refundCreated:
     bindings:
@@ -117,6 +132,15 @@ components:
       payload:
         $ref: '#/components/schemas/paymentCreatedEvent'
 
+    cePaymentDone:
+      name: paymentDoneEvent
+      title: Checkout Done
+      summary: >-
+        A Payment Completion Message represents a crucial milestone in the digital transaction journey. It marks the successful conclusion of a payment process, providing a definitive confirmation that the transaction has been executed. This message typically contains key details such as the transaction ID, completion timestamp, recipient information, and the final transaction amount. It serves as a confirmation to both the payer and the payee that the funds have been transferred successfully.
+      contentType: application/cloudevents+json; charset=UTF-8
+      payload:
+        $ref: '#/components/schemas/paymentCreatedEvent'
+
     ceRefundCreatedEvent:
       name: refundCreatedEvent
       title: Refund Created
@@ -182,7 +206,7 @@ components:
         - $ref: 'https://raw.githubusercontent.com/cloudevents/spec/v1.0.1/spec.json'
       properties:
         data:
-          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payments/payments-gateway.v1.payment-created.json'
+          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payment-processing/payments-gateway.v1.refund-created.json'
 
     refundCreated:
       type: object
@@ -190,7 +214,7 @@ components:
         - $ref: 'https://raw.githubusercontent.com/cloudevents/spec/v1.0.1/spec.json'
       properties:
         data:
-          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payments/payments-gateway.v1.refund-created.json'
+          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payment-processing/payments-gateway.v1.refund-created.json'
 
     paymentOrderRegisteredInWalletEvent:
       type: object
@@ -198,7 +222,7 @@ components:
         - $ref: 'https://raw.githubusercontent.com/cloudevents/spec/v1.0.1/spec.json'
       properties:
         data:
-          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/wallet/payments-gateway.v1.transaction-wallet-registered.json'
+          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/merchant-account-management/payments-gateway.v1.transaction-wallet-registered.json'
 
     paymentOrderStartedEvent:
       type: object
@@ -206,7 +230,7 @@ components:
         - $ref: 'https://raw.githubusercontent.com/cloudevents/spec/v1.0.1/spec.json'
       properties:
         data:
-          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payments/payments-gateway.v1.payment-order-started.json'
+          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payment-processing/payments-gateway.v1.payment-order-started.json'
 
     paymentsOrderBooked:
       type: object
@@ -214,7 +238,7 @@ components:
         - $ref: 'https://raw.githubusercontent.com/cloudevents/spec/v1.0.1/spec.json'
       properties:
         data:
-          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/ledger/payments-gateway.v1.transaction-booked.json'
+          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/financial-recording-reporting/payments-gateway.v1.transaction-booked.json'
 
     paymentsOrderApproved:
       type: object
@@ -222,7 +246,7 @@ components:
         - $ref: 'https://raw.githubusercontent.com/cloudevents/spec/v1.0.1/spec.json'
       properties:
         data:
-          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payments/payments-gateway.v1.payment-order-approved.json'
+          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payment-processing/payments-gateway.v1.payment-order-approved.json'
 
     paymentsOrderDeclined:
       type: object
@@ -230,4 +254,12 @@ components:
         - $ref: 'https://raw.githubusercontent.com/cloudevents/spec/v1.0.1/spec.json'
       properties:
         data:
-          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payments/payments-gateway.v1.payment-order-declined.json'
+          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payment-processing/payments-gateway.v1.payment-order-declined.json'
+
+    paymentDone:
+      type: object
+      allOf:
+        - $ref: 'https://raw.githubusercontent.com/cloudevents/spec/v1.0.1/spec.json'
+      properties:
+        data:
+          $ref: 'https://raw.githubusercontent.com/paymentic/schemas/main/payment-processing/payments-gateway.v1.payment-done.json'
