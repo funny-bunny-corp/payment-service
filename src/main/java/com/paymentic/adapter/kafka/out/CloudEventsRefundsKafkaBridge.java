@@ -44,7 +44,7 @@ public class CloudEventsRefundsKafkaBridge implements RefundEventsPublisher {
         .withExtension(CExtensions.AUDIENCE.extensionName(), Audience.EXTERNAL_BOUNDED_CONTEXT.audienceName())
         .withExtension(CExtensions.EVENT_CONTEXT.extensionName(), EventContext.DOMAIN.eventContextName())
         .build();
-    Supplier<CompletableFuture<Void>> messageSupplier = () -> this.sender.send(TopicNames.PAYMENTS.topicName(), ce)
+    Supplier<CompletableFuture<Void>> messageSupplier = () -> this.sender.send(TopicNames.PAYMENT_PROCESSING.topicName(), ce)
         .thenRun(() -> logger.info("Message sent. Id: {}; Data: {}", ce.getId(), event));
     this.refundCreatedTimer.record(messageSupplier);
   }

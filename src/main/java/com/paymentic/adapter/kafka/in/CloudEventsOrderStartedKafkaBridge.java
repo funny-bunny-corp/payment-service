@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CloudEventsOrderStartedKafkaBridge {
-  private static final String PAYMENT_ORDER_STARTED_EVENT_TYPE = "paymentic.payments.gateway.v1.payment.order.started";
+  private static final String PAYMENT_ORDER_STARTED_EVENT_TYPE = "paymentic.io.payment-processing.v1.refund.started";
   private static final Logger LOGGER = LoggerFactory.getLogger(
       CloudEventsOrderStartedKafkaBridge.class);
   private static final String ERROR = "Event %s already handled!!!";
@@ -30,7 +30,7 @@ public class CloudEventsOrderStartedKafkaBridge {
     this.paymentOrderRepository = paymentOrderRepository;
     this.eventService = eventService;
   }
-  @KafkaListener(id = "paymentOrderStarted", topics = "payments")
+  @KafkaListener(id = "paymentOrderStarted", topics = "${consumers.payment-processing-topic}")
   public void listen(CloudEvent message) {
     if (PAYMENT_ORDER_STARTED_EVENT_TYPE.equals(message.getType())) {
       var handle = this.eventService.shouldHandle(new Event(UUID.fromString(message.getId())));

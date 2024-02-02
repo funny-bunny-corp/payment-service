@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CloudEventsOrderBookedKafkaBridge {
-  private static final String PAYMENT_ORDER_BOOKED_EVENT_TYPE = "paymentic.payments-gateway.v1.transaction-booked";
+  private static final String PAYMENT_ORDER_BOOKED_EVENT_TYPE = "paymentic.io.financial-reporting.v1.transaction.booked";
   private static final Logger LOGGER = LoggerFactory.getLogger(CloudEventsOrderBookedKafkaBridge.class);
   private static final String ERROR = "Event %s already handled!!!";
   private final ObjectMapper mapper;
@@ -34,7 +34,7 @@ public class CloudEventsOrderBookedKafkaBridge {
     this.eventService = eventService;
     this.publisher = publisher;
   }
-  @KafkaListener(id = "paymentOrderBooked", topics = "payments")
+  @KafkaListener(id = "paymentOrderBooked", topics = "${consumers.financial-reporting-topic}")
   public void listen(CloudEvent message) {
     if (PAYMENT_ORDER_BOOKED_EVENT_TYPE.equals(message.getType())) {
       var handle = this.eventService.shouldHandle(new Event(UUID.fromString(message.getId())));
