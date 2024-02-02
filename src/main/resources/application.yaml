@@ -1,3 +1,8 @@
 spring:
   application:
     name: payment-service
+
+consumers:
+  payment-processing-topic: payment-processing
+  financial-reporting-topic: financial-reporting
+  merchant-account-topic: merchant-account

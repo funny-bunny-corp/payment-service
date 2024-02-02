@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CloudEventsWalletUpdated {
-  private static final String TRANSACTION_REGISTERED_EVENT_TYPE = "paymentic.payments-gateway.v1.transaction-registered";
+  private static final String TRANSACTION_REGISTERED_EVENT_TYPE = "paymentic.io.merchant-account.v1.transaction.registered";
   private static final Logger LOGGER = LoggerFactory.getLogger(CloudEventsWalletUpdated.class);
   private static final String ERROR = "Event %s already handled!!!";
   private final ObjectMapper mapper;
@@ -31,7 +31,7 @@ public class CloudEventsWalletUpdated {
     this.eventService = eventService;
   }
 
-  @KafkaListener(id = "paymentOrderWalletUpdated", topics = "payments")
+  @KafkaListener(id = "paymentOrderWalletUpdated", topics = "${consumers.merchant-account-topic}")
   public void listen(CloudEvent message) {
     if (TRANSACTION_REGISTERED_EVENT_TYPE.equals(message.getType())) {
       var handle = this.eventService.shouldHandle(new Event(UUID.fromString(message.getId())));
