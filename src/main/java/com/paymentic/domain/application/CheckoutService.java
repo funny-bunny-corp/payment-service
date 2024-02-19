@@ -47,8 +47,10 @@ public class CheckoutService implements ApplicationListener<CheckoutClosedEvent>
     Checkout checkout = createCheckout(request, idempotencyKey);
     List<PaymentOrderData> paymentOrderDataList = processPaymentOrders(request, checkout);
     var checkoutData = new CheckoutData(checkout.getId(),checkout.getBuyerInfo(),checkout.getCardInfo(),idempotencyKey);
-    PaymentCreatedEvent paymentCreatedEvent = new PaymentCreatedEvent(checkoutData, paymentOrderDataList);
-    eventsBridge.paymentCreated(paymentCreatedEvent);
+    paymentOrderDataList.forEach(order -> {
+      PaymentCreatedEvent paymentCreatedEvent = new PaymentCreatedEvent(checkoutData, order);
+      eventsBridge.paymentCreated(paymentCreatedEvent);
+    });
     return checkout;
   }
   private Checkout createCheckout(PaymentRequest request, String idempotencyKey) {

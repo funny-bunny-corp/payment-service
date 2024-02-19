@@ -4,10 +4,10 @@ import com.paymentic.domain.events.data.CheckoutData;
 import com.paymentic.domain.events.data.PaymentOrderData;
 import java.util.List;
 
-public record PaymentCreatedEvent(CheckoutData checkout, List<PaymentOrderData> payments) {
+public record PaymentCreatedEvent(CheckoutData checkout, PaymentOrderData payment) {
   private static final String EVENT_TYPE = "paymentic.io.payment-processing.v1.payment.created";
-  private static final String SUBJECT = "new-payment-request";
-  private static final String SOURCE_PATTERN = "/payments/%s";
+  private static final String SUBJECT = "/payments/%s";
+  private static final String SOURCE_PATTERN = "/checkout/%s";
   public String type() {
     return EVENT_TYPE;
   }
@@ -15,7 +15,7 @@ public record PaymentCreatedEvent(CheckoutData checkout, List<PaymentOrderData> 
     return String.format(SOURCE_PATTERN,checkout.id().toString());
   }
   public String subject() {
-    return SUBJECT;
+    return String.format(SUBJECT, payment.id().toString());
   }
 
 }
