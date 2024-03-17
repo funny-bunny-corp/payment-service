@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CloudEventsOrderBookedKafkaBridge {
-  private static final String PAYMENT_ORDER_BOOKED_EVENT_TYPE = "paymentic.io.financial-reporting.v1.transaction.booked";
+  private static final String PAYMENT_ORDER_BOOKED_EVENT_TYPE = "funny-bunny.xyz.financial-reporting.v1.transaction.booked";
   private static final Logger LOGGER = LoggerFactory.getLogger(CloudEventsOrderBookedKafkaBridge.class);
   private static final String ERROR = "Event %s already handled!!!";
   private final ObjectMapper mapper;

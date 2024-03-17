@@ -5,7 +5,7 @@ import com.paymentic.domain.events.data.PaymentOrderData;
 import java.util.List;
 
 public record PaymentCreatedEvent(CheckoutData checkout, PaymentOrderData payment) {
-  private static final String EVENT_TYPE = "paymentic.io.payment-processing.v1.payment.created";
+  private static final String EVENT_TYPE = "funny-bunny.xyz.payment-processing.v1.payment.created";
   private static final String SUBJECT = "/payments/%s";
   private static final String SOURCE_PATTERN = "/checkout/%s";
   public String type() {
