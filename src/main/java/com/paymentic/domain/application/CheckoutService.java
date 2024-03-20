@@ -14,6 +14,7 @@ import com.paymentic.domain.repositories.CheckoutRepository;
 import com.paymentic.domain.shared.BuyerInfo;
 import com.paymentic.domain.shared.CardInfo;
 import com.paymentic.domain.shared.SellerInfo;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,9 +47,12 @@ public class CheckoutService implements ApplicationListener<CheckoutClosedEvent>
     idempotencyKeyService.handleUsage(idempotencyKeyRequestUsage);
     Checkout checkout = createCheckout(request, idempotencyKey);
     List<PaymentOrderData> paymentOrderDataList = processPaymentOrders(request, checkout);
-    var checkoutData = new CheckoutData(checkout.getId(),checkout.getBuyerInfo(),checkout.getCardInfo(),idempotencyKey);
-    PaymentCreatedEvent paymentCreatedEvent = new PaymentCreatedEvent(checkoutData, paymentOrderDataList);
-    eventsBridge.paymentCreated(paymentCreatedEvent);
+    var checkoutData = new CheckoutData(checkout.getId(),checkout.getBuyerInfo(),checkout.getCardInfo(),idempotencyKey,
+        LocalDateTime.now());
+    paymentOrderDataList.forEach(order -> {
+      PaymentCreatedEvent paymentCreatedEvent = new PaymentCreatedEvent(checkoutData, order);
+      eventsBridge.paymentCreated(paymentCreatedEvent);
+    });
     return checkout;
   }
   private Checkout createCheckout(PaymentRequest request, String idempotencyKey) {

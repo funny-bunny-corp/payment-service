@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CloudEventsOrderApprovedKafkaBridge {
-  private static final String PAYMENT_ORDER_APPROVED_EVENT_TYPE = "paymentic.io.payment-processing.v1.payment-order.approved";
+  private static final String PAYMENT_ORDER_APPROVED_EVENT_TYPE = "funny-bunny.xyz.payment-processing.v1.payment-order.approved";
   private static final Logger LOGGER = LoggerFactory.getLogger(
       CloudEventsOrderApprovedKafkaBridge.class);
   private static final String ERROR = "Event %s already handled!!!";

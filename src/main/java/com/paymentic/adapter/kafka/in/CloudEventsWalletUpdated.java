@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CloudEventsWalletUpdated {
-  private static final String TRANSACTION_REGISTERED_EVENT_TYPE = "paymentic.io.merchant-account.v1.transaction.registered";
+  private static final String TRANSACTION_REGISTERED_EVENT_TYPE = "funny-bunny.xyz.merchant-account.v1.transaction.registered";
   private static final Logger LOGGER = LoggerFactory.getLogger(CloudEventsWalletUpdated.class);
   private static final String ERROR = "Event %s already handled!!!";
   private final ObjectMapper mapper;
