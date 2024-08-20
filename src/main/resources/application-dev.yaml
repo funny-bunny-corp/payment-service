@@ -16,7 +16,7 @@ spring:
       group-id: payment-service-group-id
     properties:
       security:
-        protocol: none
+        protocol: PLAINTEXT
       sasl:
         jaas:
           config: none
