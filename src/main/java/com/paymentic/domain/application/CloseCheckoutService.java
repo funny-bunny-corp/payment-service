@@ -7,6 +7,7 @@ import com.paymentic.domain.events.PaymentOrderBookedEvent;
 import com.paymentic.domain.events.publisher.PaymentEventsPublisher;
 import com.paymentic.domain.repositories.PaymentOrderRepository;
 import com.paymentic.domain.specification.PaymentOrderClosed;
+import java.time.LocalDateTime;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,8 @@ public class CloseCheckoutService implements ApplicationListener<PaymentOrderBoo
         .findAny();
     if (data.isEmpty()) {
       this.publisher.publishEvent(new CheckoutClosedEvent(this, event.getCheckoutId()));
-      this.paymentEventsPublisher.paymentDone(new PaymentDoneEvent(event.getCheckoutId()));
+      this.paymentEventsPublisher.paymentDone(new PaymentDoneEvent(event.getCheckoutId(),
+          LocalDateTime.now()));
     }
   }
 }
