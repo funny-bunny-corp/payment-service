@@ -43,6 +43,7 @@ public class CheckoutResource implements PaymentsApi {
         Collectors.toList());
     return ResponseEntity.ok(orders);
   }
+
   private PaymentOrder.StatusEnum convert(PaymentOrderStatus status){
     return PaymentOrder.StatusEnum.valueOf(status.name());
   }

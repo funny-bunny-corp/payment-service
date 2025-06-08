@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RefundResource implements RefundsApi {
+
   private final RefundService refundService;
+
   public RefundResource(RefundService refundService) {
     this.refundService = refundService;
   }
