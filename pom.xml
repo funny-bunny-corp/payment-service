@@ -158,6 +158,8 @@
         <version>7.0.0-beta</version>
         <executions>
           <execution>
+            <id>generate</id>
+            <phase>generate-sources</phase>
             <goals>
               <goal>generate</goal>
             </goals>
@@ -174,6 +176,26 @@
                 <documentationProvider>springdoc</documentationProvider>
                 <groupControllersByTags>true</groupControllersByTags>
               </configOptions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.5.0</version>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.basedir}/target/generated-sources/openapi/src/main/java</source>
+              </sources>
             </configuration>
           </execution>
         </executions>
