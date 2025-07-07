@@ -31,7 +31,6 @@
       "processingDurationMs"
     ],
     "bloomFilterColumns": [
-      "paymentId",
       "checkoutId",
       "idempotencyKey"
     ],
