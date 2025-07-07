@@ -1,0 +1,116 @@
+{
+  "schemaName": "payment_transactions",
+  "dimensionFieldSpecs": [
+    {
+      "name": "paymentId",
+      "dataType": "STRING",
+      "notNull": true
+    },
+    {
+      "name": "checkoutId", 
+      "dataType": "STRING",
+      "notNull": true
+    },
+    {
+      "name": "merchantId",
+      "dataType": "STRING",
+      "notNull": true
+    },
+    {
+      "name": "paymentStatus",
+      "dataType": "STRING",
+      "notNull": true
+    },
+    {
+      "name": "currency",
+      "dataType": "STRING",
+      "notNull": true
+    },
+    {
+      "name": "eventType",
+      "dataType": "STRING",
+      "notNull": true
+    },
+    {
+      "name": "eventSource",
+      "dataType": "STRING"
+    },
+    {
+      "name": "eventSubject",
+      "dataType": "STRING"
+    },
+    {
+      "name": "idempotencyKey",
+      "dataType": "STRING",
+      "notNull": true
+    },
+    {
+      "name": "buyerDocument",
+      "dataType": "STRING"
+    },
+    {
+      "name": "buyerName",
+      "dataType": "STRING"
+    },
+    {
+      "name": "cardToken",
+      "dataType": "STRING"
+    },
+    {
+      "name": "cardInfoHash",
+      "dataType": "STRING"
+    },
+    {
+      "name": "paymentMethod",
+      "dataType": "STRING"
+    },
+    {
+      "name": "declineReason",
+      "dataType": "STRING"
+    },
+    {
+      "name": "processingRegion",
+      "dataType": "STRING"
+    },
+    {
+      "name": "riskScore",
+      "dataType": "STRING"
+    }
+  ],
+  "metricFieldSpecs": [
+    {
+      "name": "amountCents",
+      "dataType": "LONG",
+      "notNull": true
+    },
+    {
+      "name": "processingFeeCents",
+      "dataType": "LONG",
+      "defaultNullValue": 0
+    },
+    {
+      "name": "processingDurationMs",
+      "dataType": "LONG",
+      "defaultNullValue": 0
+    }
+  ],
+  "dateTimeFieldSpecs": [
+    {
+      "name": "eventTimestamp",
+      "dataType": "LONG",
+      "format": "1:MILLISECONDS:EPOCH",
+      "granularity": "1:MILLISECONDS",
+      "notNull": true
+    },
+    {
+      "name": "businessDate",
+      "dataType": "INT",
+      "format": "1:DAYS:SIMPLE_DATE_FORMAT:yyyyMMdd",
+      "granularity": "1:DAYS"
+    }
+  ],
+  "primaryKeyColumns": [
+    "paymentId",
+    "eventTimestamp"
+  ]
+}
