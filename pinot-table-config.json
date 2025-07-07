@@ -109,7 +109,7 @@
   "upsertConfig": {
     "mode": "FULL",
     "partialUpsertStrategies": {
-      "processingDurationMs": "INCREMENT",
+      "processingDurationMs": "OVERWRITE",
       "processingFeeCents": "OVERWRITE"
     }
   }
