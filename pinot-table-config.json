@@ -76,7 +76,7 @@
       },
       {
         "columnName": "amountCents", 
-        "transformFunction": "CASE WHEN amount IS NULL THEN 0 ELSE CAST(amount AS LONG) END"
+        "transformFunction": "CASE WHEN amountCents IS NULL THEN 0 ELSE CAST(amountCents AS LONG) END"
       }
     ],
     "filterConfig": {
