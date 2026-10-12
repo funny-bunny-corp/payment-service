@@ -110,6 +110,7 @@
     }
   ],
   "primaryKeyColumns": [
-    "paymentId"
+    "paymentId",
+    "eventTimestamp"
   ]
 }
